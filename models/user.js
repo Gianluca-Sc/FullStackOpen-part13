@@ -28,6 +28,7 @@ User.init(
         notNull: {
           msg: "Username is required",
         },
+        isEmail: true,
       },
     },
     password: {
