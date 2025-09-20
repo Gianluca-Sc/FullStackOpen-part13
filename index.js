@@ -1,5 +1,6 @@
 import express from "express";
 import blogsRouter from "./controllers/blogs.js";
+import usersRouter from "./controllers/users.js";
 import { connectToDatabase } from "./util/db.js";
 import { PORT } from "./util/config.js";
 import { errorHandler, unknownEndpoint } from "./util/middleware.js";
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/blogs", blogsRouter);
+app.use("/api/users", usersRouter);
 
 app.use(unknownEndpoint);
 app.use(errorHandler);

@@ -4,7 +4,14 @@ export const errorHandler = (error, req, res, next) => {
     msg: error.message,
   };
 
+  console.log(error);
+
   if (error.name === "SequelizeValidationError") {
+    customError.statusCode = 400;
+    customError.msg = error.errors.map(({ message }) => message).join(", ");
+  }
+
+  if (error.name === "SequelizeUniqueConstraintError") {
     customError.statusCode = 400;
     customError.msg = error.errors.map(({ message }) => message).join(", ");
   }
