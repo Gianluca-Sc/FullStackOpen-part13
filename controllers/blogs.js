@@ -41,7 +41,10 @@ router.put("/:id", blogFinder, async (req, res) => {
   res.json(req.blog);
 });
 
-router.delete("/:id", blogFinder, async (req, res) => {
+router.delete("/:id", tokenExtractor, blogFinder, async (req, res) => {
+  if (req.blog.userId !== req.decodedToken.id)
+    return res.status(401).json({ error: "Unauthorized" });
+
   await req.blog.destroy();
   res.status(204).end();
 });
