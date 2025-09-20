@@ -43,7 +43,6 @@ export const userFinder = async (req, res, next) => {
 
 export const tokenExtractor = (req, res, next) => {
   const authorization = req.get("authorization");
-  console.log(authorization);
 
   if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
     try {
