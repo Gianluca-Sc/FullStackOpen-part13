@@ -1,5 +1,6 @@
 import express from "express";
-import { Blog } from "../models/index.js";
+import { Blog, User } from "../models/index.js";
+import { tokenExtractor } from "../util/middleware.js";
 
 const router = express.Router();
 
@@ -22,8 +23,9 @@ router.get("/:id", blogFinder, async (req, res) => {
   res.json(req.blog);
 });
 
-router.post("/", async (req, res) => {
-  const blog = await Blog.create(req.body);
+router.post("/", tokenExtractor, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id);
+  const blog = await Blog.create({ ...req.body, userId: user.id });
   res.json(blog);
 });
 

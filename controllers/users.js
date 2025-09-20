@@ -1,5 +1,5 @@
 import express from "express";
-import { User } from "../models/index.js";
+import { Blog, User } from "../models/index.js";
 import bcrypt from "bcrypt";
 
 const router = express.Router();
@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({ name, username, password: hashedPassword });
 
-  res.json(user);
+  res.json({ user });
 });
 
 router.get("/:username", userFinder, async (req, res) => {
