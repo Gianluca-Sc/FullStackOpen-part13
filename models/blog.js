@@ -16,10 +16,20 @@ Blog.init(
     url: {
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Url is required",
+        },
+      },
     },
     title: {
       type: DataTypes.TEXT,
       allowNull: false,
+      validate: {
+        notNull: {
+          msg: "Title is required",
+        },
+      },
     },
     likes: {
       type: DataTypes.INTEGER,
