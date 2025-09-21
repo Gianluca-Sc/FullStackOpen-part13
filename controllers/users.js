@@ -1,14 +1,13 @@
 import express from "express";
 import { Blog, User } from "../models/index.js";
 import bcrypt from "bcrypt";
+import ReadingList from "../models/readingList.js";
 
 const router = express.Router();
 
 const userFinder = async (req, res, next) => {
-  const { username } = req.params;
-  req.user = await User.findOne({
-    where: { username },
-  });
+  const { id } = req.params;
+  req.user = await User.findByPk(id);
 
   if (!req.user) {
     return res.status(404).json({ error: "User not found" });
@@ -34,12 +33,32 @@ router.post("/", async (req, res) => {
   res.json({ user });
 });
 
-router.get("/:username", userFinder, async (req, res) => {
-  const user = req.user;
-  res.json(user);
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findByPk(id, {
+    attributes: ["name", "username"],
+    include: [
+      {
+        model: Blog,
+        as: "readings",
+        attributes: {
+          exclude: ["userId", "createdAt", "updatedAt"],
+        },
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+  });
+
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(404).end();
+  }
 });
 
-router.put("/:username", userFinder, async (req, res) => {
+router.put("/:id", userFinder, async (req, res) => {
   const { newUsername } = req.body;
   const user = req.user;
 
