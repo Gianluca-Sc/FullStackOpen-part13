@@ -1,3 +1,5 @@
+import Session from "../models/session.js";
+import User from "../models/user.js";
 import { SECRET } from "./config.js";
 import jwt from "jsonwebtoken";
 
@@ -53,5 +55,28 @@ export const tokenExtractor = (req, res, next) => {
   } else {
     return res.status(401).json({ error: "token missing" });
   }
+  next();
+};
+
+export const checkSession = async (req, res, next) => {
+  const { id } = req.decodedToken;
+  const token = req.get("authorization").substring(7);
+
+  const session = await Session.findOne({
+    where: {
+      userId: id,
+      token: token,
+    },
+  });
+
+  if (!session) return res.status(401).json({ error: "Session not found" });
+
+  const user = await session.getUser();
+
+  if (user.disabled) {
+    await session.destroy();
+    return res.status(401).json({ error: "User disabled" });
+  }
+
   next();
 };
